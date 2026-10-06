@@ -29,7 +29,7 @@ export default function AICaptionDialog({ open, onOpenChange, onSelect }: AICapt
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg" data-testid="ai-caption-dialog">
+      <DialogContent className="sm:max-w-lg space-y-3" data-testid="ai-caption-dialog">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-heading">
             <Sparkles className="h-4 w-4 text-primary" />
@@ -40,7 +40,8 @@ export default function AICaptionDialog({ open, onOpenChange, onSelect }: AICapt
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-wrap gap-2" data-testid="ai-caption-emotions">
+        {/* Emoções */}
+        <div className="flex flex-wrap gap-2 pt-1" data-testid="ai-caption-emotions">
           {EMOTIONS.map((e, i) => (
             <button
               key={e}
@@ -59,12 +60,14 @@ export default function AICaptionDialog({ open, onOpenChange, onSelect }: AICapt
           ))}
         </div>
 
+        {/* Input de tema integrado de forma compacta */}
         <Input
           data-testid="ai-caption-topic-input"
           placeholder="Sobre o que é o post? (opcional)"
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
           maxLength={300}
+          className="w-full"
         />
 
         <Button
@@ -84,7 +87,7 @@ export default function AICaptionDialog({ open, onOpenChange, onSelect }: AICapt
         )}
 
         {generate.data && (
-          <div className="space-y-2" data-testid="ai-caption-results">
+          <div className="space-y-2 pt-1" data-testid="ai-caption-results">
             {generate.data.source === "curated" && (
               <p className="text-xs text-muted-foreground">
                 A IA deu uma escapada — deixei versos selecionados do universo do Jão.

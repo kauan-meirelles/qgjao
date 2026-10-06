@@ -75,7 +75,7 @@ export default function PostComposer() {
             value={text}
             onChange={(e) => setText(e.target.value)}
             maxLength={1200}
-            className="min-h-20 resize-none"
+            className="min-h-20 resize-none w-full"
           />
 
           {showExtras && (
@@ -86,6 +86,7 @@ export default function PostComposer() {
                 value={lyric}
                 onChange={(e) => setLyric(e.target.value)}
                 maxLength={300}
+                className="w-full"
               />
               <Input
                 data-testid="post-composer-image-input"
@@ -93,6 +94,7 @@ export default function PostComposer() {
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
                 maxLength={500}
+                className="w-full"
               />
               <Select value={era} onValueChange={(v: string) => setEra(v)}>
                 <SelectTrigger data-testid="post-composer-era-select" className="w-full">

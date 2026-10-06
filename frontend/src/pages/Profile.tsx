@@ -14,10 +14,8 @@ import PostCard from "@/components/PostCard";
 import { buttonVariants } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function Profile() {
@@ -63,9 +61,9 @@ export default function Profile() {
   const data = userQ.data;
 
   return (
-    <div>
-      {/* Banner */}
-      <div className="relative h-40 overflow-hidden sm:h-52" data-testid="profile-banner">
+    <div className="pb-16">
+      {/* Banner corrigido sem cortes */}
+      <div className="relative h-48 w-full overflow-hidden sm:h-60 rounded-b-2xl" data-testid="profile-banner">
         {data?.user.banner_url ? (
           <img src={data.user.banner_url} alt="Banner do fã" className="h-full w-full object-cover" />
         ) : (
@@ -76,13 +74,13 @@ export default function Profile() {
             }}
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0D090A]/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0D090A]/90 via-[#0D090A]/30 to-transparent" />
       </div>
 
       <div className="mx-auto max-w-3xl px-4">
-        <div className="-mt-10 flex flex-wrap items-end justify-between gap-3">
+        <div className="-mt-12 flex flex-wrap items-end justify-between gap-3 relative z-10">
           <div className="flex items-end gap-3">
-            <span className="rounded-full border-4 border-background">
+            <span className="rounded-full border-4 border-background bg-background shadow-md">
               <Avatar
                 name={data?.user.name ?? me?.name ?? "Fã"}
                 username={data?.user.username ?? me?.username ?? "fa"}
@@ -91,7 +89,7 @@ export default function Profile() {
               />
             </span>
             <div className="pb-1">
-              <h1 className="font-heading text-2xl font-bold tracking-tight" data-testid="profile-name">
+              <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground" data-testid="profile-name">
                 {data?.user.name ?? <span className="block h-7 w-40 animate-pulse rounded bg-muted" />}
               </h1>
               <p className="text-sm text-muted-foreground" data-testid="profile-username">
@@ -108,19 +106,20 @@ export default function Profile() {
           <div className="mt-4 flex flex-wrap items-center gap-2" data-testid="profile-badges">
             <FanBadge points={data.user.points} />
             <span
-              className="rounded-full border px-2.5 py-0.5 text-xs"
+              className="rounded-full border px-2.5 py-0.5 text-xs font-medium"
               style={{
                 color: eraDef(data.user.favorite_era)?.color,
                 borderColor: `${eraDef(data.user.favorite_era)?.color}55`,
+                backgroundColor: `${eraDef(data.user.favorite_era)?.color}15`,
               }}
               data-testid="profile-era"
             >
               Era {eraLabel(data.user.favorite_era)}
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-0.5 text-xs text-muted-foreground" data-testid="profile-points">
+            <span className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-0.5 text-xs text-muted-foreground bg-card">
               <Sparkles className="h-3 w-3 text-primary" /> {data.user.points} pontos
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-0.5 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-0.5 text-xs text-muted-foreground bg-card">
               <CalendarDays className="h-3 w-3" /> desde{" "}
               {new Date(data.user.created_at).toLocaleDateString("pt-BR", { month: "short", year: "numeric" })}
             </span>
@@ -128,10 +127,10 @@ export default function Profile() {
         )}
 
         {data && (data.user.bio || data.user.quote) && (
-          <Card className="mt-4 p-4" data-testid="profile-about">
-            {data.user.bio && <p className="text-sm leading-relaxed">{data.user.bio}</p>}
+          <Card className="mt-4 p-4 bg-card/50 backdrop-blur-sm border-border" data-testid="profile-about">
+            {data.user.bio && <p className="text-sm leading-relaxed text-foreground/90">{data.user.bio}</p>}
             {data.user.quote && (
-              <p className="mt-2 border-l-2 border-primary pl-3 font-heading text-sm italic text-[#E8C9CD]">
+              <p className="mt-2 border-l-2 border-primary pl-3 font-heading text-sm italic text-primary/90">
                 “{data.user.quote}”
               </p>
             )}
@@ -167,8 +166,8 @@ export default function Profile() {
 
 function StatBox({ label, value, icon }: { label: string; value: string; icon?: ReactNode }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-3 text-center">
-      <p className="flex items-center justify-center gap-1 font-heading text-lg font-bold" data-testid="profile-stat-value">
+    <div className="rounded-xl border border-border bg-card p-3 text-center shadow-sm">
+      <p className="flex items-center justify-center gap-1 font-heading text-lg font-bold text-foreground" data-testid="profile-stat-value">
         {icon}
         {value}
       </p>
@@ -176,7 +175,6 @@ function StatBox({ label, value, icon }: { label: string; value: string; icon?: 
     </div>
   );
 }
-
 
 function EditProfileDialog({ user }: { user: ProfileOut["user"] }) {
   const qc = useQueryClient();
@@ -208,90 +206,107 @@ function EditProfileDialog({ user }: { user: ProfileOut["user"] }) {
   });
 
   return (
-    <>
-      <Button variant="outline" size="sm" data-testid="profile-edit-button" onClick={() => setOpen(true)}>
-        <Pencil className="h-4 w-4" /> Editar perfil
+    <div className="relative">
+      <Button 
+        variant="outline" 
+        size="sm" 
+        data-testid="profile-edit-button" 
+        onClick={() => setOpen(!open)}
+      >
+        <Pencil className="h-4 w-4 mr-1.5" /> {open ? "Fechar edição" : "Editar perfil"}
       </Button>
-      <Button variant="outline" size="sm" data-testid="profile-edit-button" onClick={() => setOpen(true)}>
-        <Pencil className="h-4 w-4" /> Editar perfil
-      </Button>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-lg" data-testid="profile-edit-dialog">
-          <DialogHeader>
-            <DialogTitle className="font-heading">Editar perfil de fã</DialogTitle>
-            <DialogDescription>Bio, frase que define você, avatar, banner e era do coração.</DialogDescription>
-          </DialogHeader>
+
+      {open && (
+        <div className="absolute right-0 top-12 z-50 w-96 rounded-xl border border-border bg-card p-5 shadow-2xl text-card-foreground">
+          <div className="flex items-center justify-between pb-3 border-b border-border mb-4">
+            <div>
+              <h3 className="font-heading text-lg font-bold">Editar perfil de fã</h3>
+              <p className="text-xs text-muted-foreground">Personalize sua bio, frase, avatar, banner e era.</p>
+            </div>
+            <button 
+              type="button" 
+              onClick={() => setOpen(false)}
+              className="text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded"
+            >
+              ✕
+            </button>
+          </div>
+
           <form
-            className="space-y-4"
+            className="space-y-4 max-h-[65vh] overflow-y-auto pr-1"
             onSubmit={(e) => {
               e.preventDefault();
               save.mutate();
             }}
           >
             <div className="space-y-1.5">
-              <Label htmlFor="edit-bio">Bio</Label>
+              <Label htmlFor="edit-bio" className="text-xs uppercase tracking-wider text-muted-foreground">Bio</Label>
               <Textarea
                 id="edit-bio"
                 data-testid="profile-edit-bio-input"
                 maxLength={400}
-                className="min-h-20 resize-none"
+                className="min-h-20 resize-none w-full bg-background border-border text-foreground focus:ring-primary"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="edit-quote">Frase/letra que define você</Label>
+              <Label htmlFor="edit-quote" className="text-xs uppercase tracking-wider text-muted-foreground">Frase/letra que define você</Label>
               <Input
                 id="edit-quote"
                 data-testid="profile-edit-quote-input"
                 maxLength={140}
                 value={quote}
                 onChange={(e) => setQuote(e.target.value)}
+                className="w-full bg-background border-border text-foreground focus:ring-primary"
               />
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="edit-avatar">URL do avatar</Label>
+                <Label htmlFor="edit-avatar" className="text-xs uppercase tracking-wider text-muted-foreground">URL do avatar</Label>
                 <Input
                   id="edit-avatar"
                   data-testid="profile-edit-avatar-input"
                   placeholder="https://..."
                   value={avatarUrl}
                   onChange={(e) => setAvatarUrl(e.target.value)}
+                  className="w-full bg-background border-border text-foreground focus:ring-primary text-xs"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="edit-banner">URL do banner</Label>
+                <Label htmlFor="edit-banner" className="text-xs uppercase tracking-wider text-muted-foreground">URL do banner</Label>
                 <Input
                   id="edit-banner"
                   data-testid="profile-edit-banner-input"
                   placeholder="https://..."
                   value={bannerUrl}
                   onChange={(e) => setBannerUrl(e.target.value)}
+                  className="w-full bg-background border-border text-foreground focus:ring-primary text-xs"
                 />
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="edit-era">Era favorita</Label>
-              <Select value={era} onValueChange={(v: string) => setEra(v)}>
-                <SelectTrigger id="edit-era" data-testid="profile-edit-era-select" className="w-full">
-                  <SelectValue>{(v: string) => eraLabel(v)}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {ERAS.map((e) => (
-                    <SelectItem key={e.id} value={e.id}>
-                      {e.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label htmlFor="edit-era" className="text-xs uppercase tracking-wider text-muted-foreground">Era favorita</Label>
+              <select
+                id="edit-era"
+                data-testid="profile-edit-era-select"
+                value={era}
+                onChange={(e) => setEra(e.target.value)}
+                className="w-full h-9 rounded-md border border-border bg-background px-3 py-1 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              >
+                {ERAS.map((e) => (
+                  <option key={e.id} value={e.id} className="bg-background text-foreground">
+                    {e.label}
+                  </option>
+                ))}
+              </select>
             </div>
-            <Button type="submit" className="w-full" data-testid="profile-edit-submit-button" disabled={save.isPending}>
+            <Button type="submit" className="w-full mt-2" data-testid="profile-edit-submit-button" disabled={save.isPending}>
               {save.isPending ? "Salvando..." : "Salvar alterações"}
             </Button>
           </form>
-        </DialogContent>
-      </Dialog>
-    </>
+        </div>
+      )}
+    </div>
   );
 }
